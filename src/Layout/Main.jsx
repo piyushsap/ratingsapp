@@ -1,5 +1,5 @@
 import React from 'react';
-import { Login, Search, Signup, Rating, RestaurantPage } from '../Pages/';
+import { Login, Search, Signup, Rating, RestaurantPage, Home } from '../Pages/';
 import { Route } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './Header';
@@ -10,13 +10,11 @@ function Main({ refetch, session }) {
     <div className="App">
       <Header session={session} />
       <div className="main-wrapper">
+        <Route exact path="/" component={Search} />
         <Route path="/login" render={() => <Login refetch={refetch} />} />
         <Route path="/register" render={() => <Signup refetch={refetch} />} />
-        <Route exact path="/" component={Search} />
         <Route exact path="/rating" component={Rating} />
-        <Route
-          path="/restaurant/:_id"
-          render={() => <RestaurantPage session={session} />}
+        <Route path="/restaurant/:_id" render={() => <RestaurantPage session={session} />}
         />
       </div>
       <Footer />

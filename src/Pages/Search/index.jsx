@@ -3,22 +3,89 @@ import { Button, Input } from "../../Component";
 import RestaurantItem from './restaurant';
 import { Link } from "react-router-dom";
 
-import { ApolloConsumer } from "react-apollo";
+import { ApolloConsumer, graphql } from "react-apollo";
 
 import { SEARCH_RESTAURANTS } from "../../queries";
+import MapContainer from '../Map';
 
 
 class Search extends Component {
   state = {
-    searchResults: []
+    searchResults: [],
+    userLocation: {
+      lat: 1,
+      lng: 1
+    },
+    center: {
+      lat: 1,
+      lng: 1
+    },
+    flags: {
+      isLoadingRestaurants: true,
+      isRestSearchAllowed: true,
+      isUserMarkerShown: false,
+    },
   };
+
+  componentDidMount() {
+    this.locateUser()
+    console.log(this.props.data.searchRestaurants, 123123);
+  }
 
   handleChange = ({ searchRestaurants }) => {
     this.setState({
       searchResults: searchRestaurants
     });
   };
+
+
+  locateUser() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          // debug log
+          console.log('User Successfully located', position);
+          this.setState(prevState => ({
+            userLocation: {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            },
+            center: {
+              ...prevState.center,
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            },
+            flags: {
+              ...prevState.flags,
+              isUserMarkerShown: true
+            }
+          }));
+        }
+      )
+    }
+  }
+  displayDefaultRestaurant = () => {
+    var data = this.props.data;
+    if(data.loading){
+      return(<li>Loading restaurants</li>)
+    }else{
+      return data.searchRestaurants.map(restaurant=>{
+        return(
+          <li key={restaurant.id}><Link to={`/restaurant/${restaurant._id}`}><RestaurantItem {...restaurant} /></Link></li>
+        )
+      })
+    }
+  }
+  displayDefaultRestaurantMap = () => {
+    var data = this.props.data;
+    if(data.loading){
+      return(<li>Loading restaurants</li>)
+    }else{
+      return <MapContainer {...data.searchRestaurants} />
+    }
+  }
   render() {
+    console.log(this.state)
     const { searchResults } = this.state;
 
     return (
@@ -43,21 +110,35 @@ class Search extends Component {
                   />
                 </section>
               </section>
-              <section className="search-result">
-                <h1>Showing nearby restaurants</h1>
-                <ul>
-                  {searchResults.map(restaurant => (
-                    <li key={restaurant._id}><Link to={`/restaurant/${restaurant._id}`}><RestaurantItem {...restaurant} /></Link></li>
-                  ))}
-                </ul>
-              </section>
             </Fragment>
           )}
         </ApolloConsumer>
+        <section className="search-result">
+          <h1>Showing nearby restaurants</h1>
+          {searchResults.length > 0 ? (
+            <ul>
+              {searchResults.map(restaurant => (
+                <li key={restaurant._id}><Link to={`/restaurant/${restaurant._id}`}><RestaurantItem {...restaurant} /></Link></li>
+              ))}
+            </ul>
+          ) : (
+            <ul>
+              {this.displayDefaultRestaurant()}
+            </ul>
+          )}
       </section>
+      <section className="mapview">
+          {searchResults.length > 0 ? (
+            <MapContainer {...searchResults} />
+          ) : (
+              this.displayDefaultRestaurantMap()
+          )}
+            
+      </section>
+      </section >
     );
   }
 }
 
 
-export default Search;
+export default graphql(SEARCH_RESTAURANTS)(Search);

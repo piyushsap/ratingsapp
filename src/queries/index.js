@@ -67,7 +67,18 @@ export const GET_RESTAURANT = gql`
   }
 `;
 
-/* User Queries */
+
+export const GET_RESTAURANT_RATINGS = gql`
+  query($_id: String){
+    getRestaurantRatings(restaurantid: $_id){
+      _id
+      comment
+      rating
+      username
+      joinDate
+    }
+  }
+`;
 
 export const GETCURRENT_USER = gql`
   query{

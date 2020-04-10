@@ -7,7 +7,7 @@ import { ADD_RATING } from "../../queries";
 
 const initialState = {
   rating: "",
-  comments: "",
+  comment: "",
   username: "",
   restaurantid: ""
 };
@@ -34,29 +34,26 @@ class Rating extends Component {
 
   handleSubmit = (event, addRating) => {
     event.preventDefault();
-    console.log(event,addRating)
     addRating().then(data => {
-      console.log(data)
       this.clearState();
-      //this.props.history.push('/');
     });
   };
 
   validateForm = () => {
-    const { rating, comments } = this.state;
+    const { rating, comment } = this.state;
     const isInvalid = !rating;
     return isInvalid;
   };
 
   render() {
-    const { rating, comments, username, restaurantid } = this.state;
+    const { rating, comment, username, restaurantid } = this.state;
     return (
       <section>
         <section className="add-review">
           <h2>Add Review</h2>
           <Mutation
             mutation={ADD_RATING}
-            variables={{ comments, rating, username, restaurantid }}
+            variables={{ comment, rating, username, restaurantid }}
           >
             {(addRating, { data, loading, error }) => {
               return (
@@ -66,10 +63,10 @@ class Rating extends Component {
                 >
                   <Input {...{ name: "rating", placeHolder: "Rating", id: "rating", handleBlur: this.handleChange, handleChange: this.handleChange }} />
                   <textarea
-                    name="comments"
+                    name="comment"
                     placeholder="Share your review..."
                     onChange={this.handleChange}
-                    value={comments}
+                    value={comment}
                   />
                   <Button {...{ text: "Add Rating", disable: this.validateForm() }} />
                 </form>

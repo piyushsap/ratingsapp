@@ -1,20 +1,16 @@
 import React from "react";
 
 import { Query } from "react-apollo";
-import { Redirect } from "react-router-dom";
 import { GETCURRENT_USER } from "../queries";
 
-const PrivateRoute = conditionFunc => Component => props => (
+const withSession = Component => props => (
   <Query query={GETCURRENT_USER}>
-    {({ data, loading }) => {
+    {({ data, loading, refetch }) => {
       if (loading) return null;
-      return conditionFunc(data) ? (
-        <Component {...props} />
-      ) : (
-        <Redirect to="/" />
-      );
+      // console.log(data);
+      return <Component {...props} refetch={refetch} session={data} />;
     }}
   </Query>
 );
 
-export default PrivateRoute;
+export default withSession;
