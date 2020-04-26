@@ -1,43 +1,64 @@
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
 import React, { Component } from 'react';
+import { GoogleApiWrapper, InfoWindow, Marker, Map } from 'google-maps-react';
 
-class MapContainer extends Component {
-    constructor(props) {
-      super(props);
-  
-      this.state = {
-        stores: [{lat: 47.49855629475769, lng: -122.14184416996333},
-                {latitude: 47.359423, longitude: -122.021071},
-                {latitude: 47.2052192687988, longitude: -121.988426208496},
-                {latitude: 47.6307081, longitude: -122.1434325},
-                {latitude: 47.3084488, longitude: -122.2140121},
-                {latitude: 47.5524695, longitude: -122.0425407}]
-      }
-    }
-  
-    displayMarkers = () => {
-      return this.state.stores.map((store, index) => {
-        return <Marker key={index} id={index} position={{
-         lat: store.latitude,
-         lng: store.longitude
-       }}
-       onClick={() => console.log("You clicked me!")} />
-      })
-    }
-  
-    render() {
-        console.log(this.props)
-      return (
-          <Map
-            google={this.props.google}
-            zoom={8}
-            initialCenter={{ lat: 47.444, lng: -122.176}}
-          >
-            {this.displayMarkers()}
-          </Map>
-      );
-    }
+
+export class MapContainer extends Component {
+  constructor(props){
+    super(props)
+    this.state = {
+        showingInfoWindow: false,
+        activeMarker: {},
+        selectedPlace: {}
+    };
+    this.onMarkerClick = this.onMarkerClick.bind(this)
+    this.onClose = this.onClose.bind(this)
   }
-  export default GoogleApiWrapper({
-    apiKey: "AIzaSyB-d5BWbACNa5s80fGDbLnpa9Bg8FzBc4Q"
-  })(MapContainer)
+
+    onMarkerClick = (props, marker, e) =>
+        this.setState({
+            selectedPlace: props,
+            activeMarker: marker,
+            showingInfoWindow: true
+        });
+
+    onClose = props => {
+        if (this.state.showingInfoWindow) {
+            this.setState({
+                showingInfoWindow: false,
+                activeMarker: null
+            });
+        }
+    };
+
+    render() {
+      console.log(this.props);
+        return (
+            <Map
+                google={this.props.google}
+                zoom={14}
+                initialCenter={{ lat: 28.5134859, lng: 77.0468193 }}>
+                {this.props.marker.map(marker => (
+                <Marker
+                    key={marker._id}
+                    title={'The marker`s title will appear as a tooltip.'}
+                    name={marker.name}
+                    onClick={this.onMarkerClick}
+                    position={{ lat: parseFloat(marker.latitude), lng: parseFloat(marker.longitude) }} />
+                ))}
+                <InfoWindow
+                    marker={this.state.activeMarker}
+                    visible={this.state.showingInfoWindow}
+                    onClose={this.onClose}
+                >
+                    <div>
+                        <h4>{this.state.selectedPlace.name}</h4>
+                    </div>
+                </InfoWindow>
+            </Map>
+        );
+    }
+}
+
+export default GoogleApiWrapper({
+    apiKey: process.env.GOOGLE_api_key
+})(MapContainer);

@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 
 import { Query } from "react-apollo";
 import { GET_RESTAURANT, GET_RESTAURANT_RATINGS } from "../../queries";
@@ -10,11 +10,13 @@ const RestaurantPage = ({ match, session }) => {
   const { _id } = match.params;
   return (
     <Fragment>
+      {session && session.getCurrentUser===null ?(
+        <Redirect to="/" />
+      ):null}
       <Query query={GET_RESTAURANT} variables={{ _id }}>
         {({ data, loading, error }) => {
           if (loading) return <Spinner />;
           if (error) return <div>Error</div>;
-          //console.log(data);
           return (
             <div className="restaurant">
               <div className="restaurant-wrap">

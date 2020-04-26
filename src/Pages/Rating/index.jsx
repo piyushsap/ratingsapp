@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Mutation } from "react-apollo";
-import { withRouter } from "react-router-dom";
+import { withRouter, Redirect } from "react-router-dom";
 
 import { Button, Input, Alert } from "../../Component";
 import { ADD_RATING } from "../../queries";
@@ -17,7 +17,6 @@ class Rating extends Component {
 
 
   componentDidMount() {
-    console.log(this.props)
     this.setState({
       username: this.props.session.getCurrentUser.username,
       restaurantid: this.props.restaurant
@@ -49,6 +48,9 @@ class Rating extends Component {
     const { rating, comment, username, restaurantid } = this.state;
     return (
       <section>
+        {this.props.session && this.props.session.getCurrentUser===null ?(
+          <Redirect to="/" />
+        ):null}
         <section className="add-review">
           <h2>Add Review</h2>
           <Mutation

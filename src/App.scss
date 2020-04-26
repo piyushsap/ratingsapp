@@ -1,3 +1,6 @@
+a:hover{
+    text-decoration: none;
+}
 .container{
   max-width: 1100px;
   width: 100%;
@@ -24,6 +27,11 @@ body{
       li{
         display: inline-block;
         a{color: #333; padding: 0 8px;}
+        button{
+          background: none transparent;
+          border: 0;
+          outline: none;
+        }
       }
     }
   }
@@ -78,10 +86,13 @@ body{
 }
 .search{
   padding: 0 15px;
+  display: flex;
+  flex-wrap: wrap;
   &-bg{
     margin: 0 -15px;
     background: url(../src/Assets/images/search-bg.jpg);
     padding: 120px 15px;
+    flex: 1 1 100%;
   }
   &-wrap{
     max-width: 1100px;
@@ -111,10 +122,10 @@ body{
     }
   }
   &-result{
-    max-width: 1100px;
-    margin: 0 auto;
-    width: 100%;
+    flex: 0 0 50%;
     padding: 40px 0;
+    max-height: calc(100vh - 241px);
+    overflow-x: auto;
     ul{
       display: flex;
       margin: 0 -15px;
@@ -122,19 +133,25 @@ body{
       flex-wrap: wrap;
       li{
         padding: 15px;
-        flex: 0 0 33.33%;
+        flex: 0 0 100%;
         display: inline-block;
       }
     }
+  }
+  &-mapview{
+    max-height: calc(100vh - 241px);
+    flex: 0 0 50%;
+    order: 1;
+    position:relative;
   }
 }
 .restaurant-item{
   width: 100%;
   margin-bottom: 15px;
+  display: flex;
   .image{
-    max-height: 200px;
-    overflow: hidden;
-    margin-bottom: 15px;
+    flex: 0 0 150px;
+    padding-right: 15px
   }
   img{
     width: 100%;

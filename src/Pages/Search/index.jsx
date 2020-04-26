@@ -81,7 +81,7 @@ class Search extends Component {
     if(data.loading){
       return(<li>Loading restaurants</li>)
     }else{
-      return <MapContainer {...data.searchRestaurants} />
+      return <MapContainer  marker={data.searchRestaurants} defaultCenter={this.state.userLocation} />
     }
   }
   render() {
@@ -113,6 +113,14 @@ class Search extends Component {
             </Fragment>
           )}
         </ApolloConsumer>
+      <section className="search-mapview">
+          {searchResults.length > 0 ? (
+            <MapContainer marker={searchResults} defaultCenter={this.state.userLocation} />
+          ) : (
+              this.displayDefaultRestaurantMap()
+          )}
+            
+      </section>
         <section className="search-result">
           <h1>Showing nearby restaurants</h1>
           {searchResults.length > 0 ? (
@@ -126,14 +134,6 @@ class Search extends Component {
               {this.displayDefaultRestaurant()}
             </ul>
           )}
-      </section>
-      <section className="mapview">
-          {searchResults.length > 0 ? (
-            <MapContainer {...searchResults} />
-          ) : (
-              this.displayDefaultRestaurantMap()
-          )}
-            
       </section>
       </section >
     );
